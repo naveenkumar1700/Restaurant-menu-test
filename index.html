@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spicy Bites & Tandoori - Digital Menu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#26140b',
+                            brown: '#3b2012',
+                            gold: '#d4af37',
+                            cream: '#fcfaf6',
+                            veg: '#15803d',
+                            nonveg: '#b91c1c'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fcfaf6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #26140b;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Standard Veg/Non-Veg FSSAI Symbol Indicators */
+        .symbol-box {
+            width: 15px;
+            height: 15px;
+            border-width: 1.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 3px;
+        }
+        .symbol-veg { border-color: #15803d; }
+        .symbol-veg-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #15803d;
+        }
+        .symbol-nonveg { border-color: #b91c1c; }
+        .symbol-nonveg-triangle {
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 7px solid #b91c1c;
+        }
+    </style>
+</head>
+<body class="pb-16 text-stone-900 selection:bg-amber-200">
+
+    <!-- Top NFC / QR Scanning Indicator Badge -->
+    <div class="bg-gradient-to-r from-stone-900 via-[#26140b] to-stone-900 text-amber-300 text-xs px-4 py-2 border-b border-amber-500/30 flex items-center justify-between sticky top-0 z-50 shadow-md">
+        <div class="flex items-center space-x-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-bold text-amber-200 uppercase tracking-wide text-[11px]">
+                <i class="fas fa-qrcode mr-1 text-amber-400"></i> Direct Digital Menu
+            </span>
+        </div>
+        <span class="text-[10px] text-amber-300/80 font-medium">Please order with your Server</span>
+    </div>
+
+    <!-- Header Banner -->
+    <header class="bg-[#26140b] text-white pt-6 pb-7 px-4 border-b-2 border-[#d4af37] shadow-xl">
+        <div class="max-w-2xl mx-auto text-center">
+            <span class="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/40 inline-block mb-2">
+                Authentic Delicacies & Refreshments
+            </span>
+            <h1 class="font-heading text-2xl sm:text-3xl font-bold tracking-wider text-[#d4af37]">
+                SPICY BITES & TANDOORI
+            </h1>
+            <p class="text-xs text-amber-200/80 mt-1 font-medium">Explore menu items & inform your server to place an order</p>
+
+            <!-- Search Input Box -->
+            <div class="relative mt-4 max-w-md mx-auto">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search Biryani, Starter, Mojito, Naan..."
+                    class="w-full bg-[#3b2012]/90 text-white placeholder-amber-200/50 text-xs sm:text-sm pl-9 pr-8 py-2.5 rounded-xl border border-amber-500/30 focus:border-[#d4af37] focus:outline-none shadow-inner">
+                <i class="fas fa-search absolute left-3 top-3 text-amber-400/70 text-xs"></i>
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-2.5 text-amber-300 hover:text-white text-xs">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Dietary Toggles -->
+            <div class="flex justify-center items-center space-x-2 mt-4 text-xs font-semibold">
+                <button onclick="setDietFilter('all')" id="filter-all" class="diet-btn px-3.5 py-1.5 rounded-full bg-[#d4af37] text-stone-950 font-bold transition shadow-xs">
+                    All Items
+                </button>
+                <button onclick="setDietFilter('veg')" id="filter-veg" class="diet-btn px-3.5 py-1.5 rounded-full bg-[#3b2012] text-emerald-400 border border-emerald-600/40 flex items-center space-x-1.5 transition">
+                    <span class="symbol-box symbol-veg"><span class="symbol-veg-dot"></span></span>
+                    <span>Veg Only</span>
+                </button>
+                <button onclick="setDietFilter('non-veg')" id="filter-non-veg" class="diet-btn px-3.5 py-1.5 rounded-full bg-[#3b2012] text-rose-400 border border-rose-600/40 flex items-center space-x-1.5 transition">
+                    <span class="symbol-box symbol-nonveg"><span class="symbol-nonveg-triangle"></span></span>
+                    <span>Non-Veg</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Chef's Specials Highlight Card -->
+    <section class="max-w-2xl mx-auto px-4 mt-5">
+        <div class="bg-gradient-to-r from-amber-100/70 via-orange-50 to-amber-50 border border-amber-300/80 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-crown text-amber-600 text-sm"></i>
+                    <h2 class="font-heading font-bold text-amber-950 text-sm sm:text-base">Chef's Specials & Must Try</h2>
+                </div>
+                <span class="text-[10px] font-bold text-amber-800 bg-amber-200/60 px-2 py-0.5 rounded-md uppercase">Popular</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div class="bg-white/90 p-3 rounded-xl border border-amber-200/60 flex justify-between items-center shadow-xs">
+                    <div class="flex items-center space-x-2">
+                        <span class="symbol-box symbol-nonveg"><span class="symbol-nonveg-triangle"></span></span>
+                        <div>
+                            <h4 class="font-bold text-stone-800 text-xs">Palamuri Chicken Biryani</h4>
+                            <p class="text-[10px] text-stone-500">Spicy regional bone-in biryani</p>
+                        </div>
+                    </div>
+                    <span class="font-bold text-[#26140b] text-sm">₹400</span>
+                </div>
+                <div class="bg-white/90 p-3 rounded-xl border border-amber-200/60 flex justify-between items-center shadow-xs">
+                    <div class="flex items-center space-x-2">
+                        <span class="symbol-box symbol-veg"><span class="symbol-veg-dot"></span></span>
+                        <div>
+                            <h4 class="font-bold text-stone-800 text-xs">Bhimavaram Mix Veg Pulav</h4>
+                            <p class="text-[10px] text-stone-500">Aromatic spiced mixed veg pulao</p>
+                        </div>
+                    </div>
+                    <span class="font-bold text-[#26140b] text-sm">₹315</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sticky Category Navigation Bar -->
+    <nav class="sticky top-[35px] z-40 bg-[#fcfaf6]/95 backdrop-blur-md border-b border-amber-900/10 py-2.5 px-3 mt-4 shadow-xs">
+        <div class="max-w-2xl mx-auto overflow-x-auto hide-scrollbar flex space-x-2 text-xs font-bold" id="categoryNav">
+            <!-- Dynamic Category Pills Rendered Here -->
+        </div>
+    </nav>
+
+    <!-- Main Menu Display Container -->
+    <main class="max-w-2xl mx-auto px-4 mt-5 space-y-8" id="menuDisplay">
+        <!-- Dynamic Menu Cards Rendered Here -->
+    </main>
+
+    <!-- Footer Notice -->
+    <footer class="max-w-2xl mx-auto px-4 mt-12 text-center text-xs text-stone-500 space-y-1">
+        <p class="font-medium">* Taxes extra | Items subject to availability | Minimum serving time 15 to 20 mins</p>
+        <p class="text-[11px] text-amber-900/60 font-semibold">Powered by Contactless NFC & QR Digital Menu</p>
+    </footer>
+
+    <!-- JavaScript Data & Render Engine -->
+    <script>
+        const rawMenu = [
+            // STARTERS (VEG)
+            { id: "sv1", name: "Veg Manchuria Dry", cat: "Starters", price: 210, isVeg: true, desc: "Crispy fried veggie balls tossed in tangy Indo-Chinese sauce" },
+            { id: "sv2", name: "Paneer Majestic", cat: "Starters", price: 310, isVeg: true, desc: "Yogurt marinated paneer strips cooked with green chillies & curry leaves" },
+            { id: "sv3", name: "Fried Baby Corn", cat: "Starters", price: 230, isVeg: true, desc: "Golden fried crunchy baby corn with special seasoning" },
+            { id: "sv4", name: "Dragon Mushroom", cat: "Starters", price: 240, isVeg: true, desc: "Button mushrooms coated in spicy dragon sauce" },
+            { id: "sv5", name: "Crispy Corn", cat: "Starters", price: 280, isVeg: true, desc: "Sweet corn kernels crispy fried with pepper and onions" },
+
+            // STARTERS (NON-VEG)
+            { id: "sn1", name: "Chicken 555", cat: "Starters", price: 345, isVeg: false, desc: "Crispy fried chicken strips tossed in spicy red masala sauce" },
+            { id: "sn2", name: "Apollo Fish", cat: "Starters", price: 370, isVeg: false, desc: "Hyderabadi style spicy boneless fish fry with curry leaves" },
+            { id: "sn3", name: "Palamuri Chicken Fry", cat: "Starters", price: 355, isVeg: false, desc: "Traditional regional style pan-roasted chicken fry" },
+            { id: "sn4", name: "Chicken Majestic", cat: "Starters", price: 345, isVeg: false, desc: "Succulent chicken strips prepared in creamy garlic sauce" },
+            { id: "sn5", name: "Chicken Lollypops (6 Pcs)", cat: "Starters", price: 380, isVeg: false, desc: "Crispy chicken wingettes served with chili dipping sauce" },
+
+            // BIRYANIS & PULAVS
+            { id: "b1", name: "Chicken Dum Biryani", cat: "Biryanis & Pulavs", price: 285, isVeg: false, desc: "Slow-cooked aromatic basmati rice with tender spice-infused chicken" },
+            { id: "b2", name: "Palamuri Mutton Biryani", cat: "Biryanis & Pulavs", price: 430, isVeg: false, desc: "Authentic rich mutton biryani prepared with local spices" },
+            { id: "b3", name: "Gongura Veg Pulao", cat: "Biryanis & Pulavs", price: 295, isVeg: true, desc: "Tangy sorrel leaves blended rice with mixed garden vegetables" },
+            { id: "b4", name: "Rayalaseema Kodi Pulao", cat: "Biryanis & Pulavs", price: 345, isVeg: false, desc: "Spicy village-style chicken pulao cooked with green chillies" },
+            { id: "b5", name: "Bhimavaram Mix Veg Pulav", cat: "Biryanis & Pulavs", price: 315, isVeg: true, desc: "Special coastal Andhra style vegetable pulao" },
+            { id: "b6", name: "Chicken Fry Piece Biryani", cat: "Biryanis & Pulavs", price: 295, isVeg: false, desc: "Flavored biryani rice topped with crispy spiced chicken fry" },
+
+            // TANDOORI & KEBABS
+            { id: "t1", name: "Chicken Tandoori Full", cat: "Tandoori & Kebabs", price: 525, isVeg: false, desc: "Whole roasted chicken marinated in yogurt and tandoori spices" },
+            { id: "t2", name: "Paneer Tikka Kabab", cat: "Tandoori & Kebabs", price: 355, isVeg: true, desc: "Clay-oven grilled marinated cottage cheese cubes with peppers" },
+            { id: "t3", name: "Reshimi Kabab", cat: "Tandoori & Kebabs", price: 355, isVeg: false, desc: "Silky, melt-in-mouth chicken kebabs marinated in cashew cream" },
+            { id: "t4", name: "Chicken Tikka Kabab", cat: "Tandoori & Kebabs", price: 335, isVeg: false, desc: "Boneless chicken pieces grilled on skewers over charcoal" },
+
+            // CURRIES & BREADS
+            { id: "c1", name: "Bhimavaram Royyal Curry", cat: "Curries & Breads", price: 410, isVeg: false, desc: "Rich prawn curry prepared with coastal spices" },
+            { id: "c2", name: "Gongura Mutton Curry", cat: "Curries & Breads", price: 420, isVeg: false, desc: "Tender mutton cooked in tangy sorrel leaf gravy" },
+            { id: "c3", name: "Butter Naan (3 Pcs)", cat: "Curries & Breads", price: 85, isVeg: true, desc: "Soft leavened tandoori bread brushed with butter" },
+            { id: "c4", name: "Garlic Naan (3 Pcs)", cat: "Curries & Breads", price: 90, isVeg: true, desc: "Flavored naan bread topped with minced garlic & cilantro" },
+            { id: "c5", name: "Tandoori Roti", cat: "Curries & Breads", price: 65, isVeg: true, desc: "Whole wheat bread baked in clay tandoor" },
+
+            // FRIED RICE & BEVERAGES
+            { id: "f1", name: "Schezwan Fried Rice (Veg / Chicken)", cat: "Fried Rice & Beverages", price: "230 - 295", isVeg: true, desc: "Spicy schezwan wok-tossed rice available in Veg, Egg or Chicken" },
+            { id: "f2", name: "Punjabi Special Lassi", cat: "Fried Rice & Beverages", price: 99, isVeg: true, desc: "Thick sweet yogurt drink garnished with nuts" },
+            { id: "f3", name: "Virgin Mojito", cat: "Fried Rice & Beverages", price: 89, isVeg: true, desc: "Chilled crushed mint, lime juice & soda mocktail" },
+            { id: "f4", name: "Thickshakes (Vanilla / Chocolate / Mango)", cat: "Fried Rice & Beverages", price: 139, isVeg: true, desc: "Rich creamy thickshake served chilled" },
+            { id: "f5", name: "Ice Creams (Vanilla / Chocolate / Butterscotch)", cat: "Fried Rice & Beverages", price: "40 - 50", isVeg: true, desc: "Delicious waffle cone ice creams" }
+        ];
+
+        const categories = ["All Categories", "Starters", "Biryanis & Pulavs", "Tandoori & Kebabs", "Curries & Breads", "Fried Rice & Beverages"];
+
+        let currentCategory = "All Categories";
+        let currentDiet = "all";
+        let searchQuery = "";
+
+        window.onload = function() {
+            renderCategoryNav();
+            renderMenuItems();
+        };
+
+        function renderCategoryNav() {
+            const nav = document.getElementById("categoryNav");
+            nav.innerHTML = categories.map(cat => {
+                const active = currentCategory === cat;
+                return `
+                    <button onclick="selectCategory('${cat}')" 
+                        class="px-3.5 py-1.5 rounded-xl whitespace-nowrap font-bold text-xs transition border ${
+                            active 
+                            ? 'bg-[#26140b] text-[#d4af37] border-[#d4af37] shadow-xs' 
+                            : 'bg-white text-stone-700 border-stone-200 hover:bg-amber-50'
+                        }">
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectCategory(cat) {
+            currentCategory = cat;
+            renderCategoryNav();
+            renderMenuItems();
+        }
+
+        function setDietFilter(filter) {
+            currentDiet = filter;
+            document.querySelectorAll('.diet-btn').forEach(btn => {
+                btn.classList.remove('bg-[#d4af37]', 'text-stone-950');
+                btn.classList.add('bg-[#3b2012]');
+            });
+            const activeBtn = document.getElementById(`filter-${filter}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-[#3b2012]');
+                activeBtn.classList.add('bg-[#d4af37]', 'text-stone-950');
+            }
+            renderMenuItems();
+        }
+
+        function handleSearch() {
+            const input = document.getElementById("searchInput");
+            searchQuery = input.value.toLowerCase().trim();
+            document.getElementById("clearSearchBtn").classList.toggle("hidden", searchQuery === "");
+            renderMenuItems();
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            searchQuery = "";
+            document.getElementById("clearSearchBtn").classList.add("hidden");
+            renderMenuItems();
+        }
+
+        function renderMenuItems() {
+            const container = document.getElementById("menuDisplay");
+            
+            let filtered = rawMenu.filter(item => {
+                const matchCat = currentCategory === "All Categories" || item.cat === currentCategory;
+                const matchSearch = searchQuery === "" || item.name.toLowerCase().includes(searchQuery) || item.desc.toLowerCase().includes(searchQuery);
+                
+                let matchDiet = true;
+                if (currentDiet === "veg") matchDiet = item.isVeg === true;
+                if (currentDiet === "non-veg") matchDiet = item.isVeg === false;
+
+                return matchCat && matchSearch && matchDiet;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 px-4">
+                        <i class="fas fa-search text-3xl text-amber-900/20 mb-2"></i>
+                        <p class="font-bold text-stone-700 text-sm">No dishes match your selection</p>
+                        <p class="text-xs text-stone-500">Try adjusting your search or diet filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentCategory === "All Categories" && searchQuery === "") {
+                let html = "";
+                categories.filter(c => c !== "All Categories").forEach(cat => {
+                    const items = filtered.filter(i => i.cat === cat);
+                    if (items.length > 0) {
+                        html += `
+                            <div>
+                                <div class="flex items-center justify-between border-b-2 border-[#26140b]/20 pb-1.5 mb-3">
+                                    <h2 class="font-heading font-bold text-base text-[#26140b]">${cat}</h2>
+                                    <span class="text-[11px] text-amber-900/60 font-semibold">${items.length} items</span>
+                                </div>
+                                <div class="space-y-2.5">
+                                    ${items.map(i => renderCard(i)).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `
+                    <div class="space-y-2.5">
+                        ${filtered.map(i => renderCard(i)).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function renderCard(item) {
+            const priceText = typeof item.price === 'number' ? `₹${item.price}` : `₹${item.price}`;
+            return `
+                <div class="bg-white rounded-xl p-3.5 border border-stone-200/80 shadow-xs flex items-center justify-between">
+                    <div class="pr-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="symbol-box ${item.isVeg ? 'symbol-veg' : 'symbol-nonveg'}">
+                                <span class="${item.isVeg ? 'symbol-veg-dot' : 'symbol-nonveg-triangle'}"></span>
+                            </span>
+                            <h3 class="font-bold text-stone-900 text-xs sm:text-sm">${item.name}</h3>
+                        </div>
+                        <p class="text-[11px] text-stone-500 mt-1 leading-snug">${item.desc}</p>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <span class="font-bold text-[#26140b] text-sm sm:text-base">${priceText}</span>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
